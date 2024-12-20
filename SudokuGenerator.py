@@ -130,12 +130,12 @@ class SudokuGenerator:
         return solution_count
 
 
-def main():
-    box_size = 3
-    empty_cells = 50
-    sudoku = SudokuGenerator(empty_cells,box_size)
-    for row in sudoku.board:
-        print(row)
+# def main():
+#     box_size = 3
+#     empty_cells = 50
+#     sudoku = SudokuGenerator(empty_cells,box_size)
+#     for row in sudoku.board:
+#         print(row)
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
