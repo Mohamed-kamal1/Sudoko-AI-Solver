@@ -4,38 +4,34 @@ from CSP import CSP
 class TestCSP(unittest.TestCase): 
     def setUp(self):
         self.board = [
-            [0, 0, 0, 2, 0, 0, 0, 0, 8],
-            [3, 0, 0, 4, 0, 0, 1, 0, 9],
-            [0, 0, 5, 7, 8, 0, 4, 3, 0],
-            [0, 3, 0, 0, 0, 2, 8, 0, 0],
-            [1, 0, 2, 0, 0, 0, 3, 0, 7],
-            [0, 0, 7, 0, 3, 0, 6, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 8, 5],
-            [0, 5, 0, 0, 0, 7, 0, 0, 3],
-            [7, 0, 3, 0, 9, 0, 0, 4, 6]
+            [6, 0, 8, 0, 0, 0, 0, 0, 0],
+            [0, 4, 0, 1, 0, 0, 5, 0, 0],
+            [0, 0, 1, 0, 0, 6, 9, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 2, 0, 0, 9, 0],
+            [0, 3, 0, 4, 0, 0, 7, 0, 0],
+            [0, 0, 0, 6, 0, 0, 0, 8, 0],
+            [3, 8, 0, 0, 0, 4, 0, 2, 0],
+            [0, 9, 0, 7, 0, 0, 0, 3, 0]
         ]
         self.csp = CSP(self.board)
 
-    def test_initial_board(self):
-        expected_board = 0
-        for row in self.board:
-            for num in row:
-                expected_board = expected_board * 10 + num
-        self.assertEqual(self.csp.init_board, expected_board)
-        
-    def test_is_valid_row(self):
-        self.assertTrue(self.csp.is_valid_row(self.board, 0, 1))
-        self.assertFalse(self.csp.is_valid_row(self.board, 0, 2))
-
-    def test_is_valid_box(self):
-        self.assertTrue(self.csp.is_valid_box(self.board, 0, 0, 1))
-        self.assertFalse(self.csp.is_valid_box(self.board, 0, 0, 3))
-
-    def test_solve(self):
-        solved = self.csp.solve(self.csp.init_state)
-        # self.assertTrue(solved)
-        self.assertEqual(len(self.csp.steps[-1]), 81)
-        self.assertNotIn('0', str(self.csp.steps[-1]))
+    def test_1(self):
+        expected = [
+                [6, 7, 8, 2, 9, 5, 3, 1, 4],
+                [9, 4, 3, 1, 7, 8, 5, 6, 2],
+                [2, 5, 1, 3, 4, 6, 9, 7, 8],
+                [5, 6, 9, 8, 1, 7, 2, 4, 3],
+                [4, 1, 7, 5, 2, 3, 8, 9, 6],
+                [8, 3, 2, 4, 6, 9, 7, 5, 1],
+                [7, 2, 5, 6, 3, 1, 4, 8, 9],
+                [3, 8, 6, 9, 5, 4, 1, 2, 7],
+                [1, 9, 4, 7, 8, 2, 6, 3, 5]
+            ]
+        step = self.csp.steps[len(self.csp.steps) - 1]
+        self.assertEqual(step, self.csp.to_int(expected))
 
 if __name__ == '__main__':
     unittest.main()
+    
+    

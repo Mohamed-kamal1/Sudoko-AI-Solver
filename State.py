@@ -1,3 +1,4 @@
+import copy
 import queue
 import sys
 
@@ -11,7 +12,7 @@ class State:
     def assign_new_variable(self, variable, value):
         # update board and empty_cells
         new_board = self.board + value * 10**(81 - variable - 1)
-        new_empty_cells = self.empty_cells.copy()
+        new_empty_cells = copy.deepcopy(self.empty_cells)
         new_empty_cells.remove(variable)
         return new_board, new_empty_cells
             
@@ -66,9 +67,21 @@ class State:
         revised = False
         domain = self.domain[variable]
         neighbor_domain = self.domain[neighbor]
-        for bit in range(9):
-            if neighbor_domain & (1<<bit) and (domain & ~(1<<bit)) == 0:
-                self.domain[neighbor] &= ~(1 << bit)
-                revised = True
+        for bit in range(9): 
+            if neighbor_domain & (1<<bit):
+                if not self.check(domain, bit):
+                    self.domain[neighbor] &= ~(1 << bit)
+                    revised = True
+                
+            # if neighbor_domain & (1<<bit) and (domain & ~(1<<bit)) == 0:
+            #     self.domain[neighbor] &= ~(1 << bit)
+            #     revised = True
         return revised
 
+    def check(self, domain, bit):
+        # check if there is any value in the domain except that bit then return true
+        for i in range(9):
+            if i != bit and domain & (1<<i):
+                return True
+        return False
+    

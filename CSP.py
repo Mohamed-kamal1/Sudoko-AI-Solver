@@ -1,5 +1,5 @@
+import copy
 from State import State
-
 
 class CSP:
     def __init__(self, board):
@@ -9,7 +9,8 @@ class CSP:
         self.get_domain(board)
         self.steps = [self.init_board]
         self.init_state = State(self.init_board, self.empty_cells, self.init_domain)
-        self.check_arc_consistency()
+        if not self.check_arc_consistency():
+            return
         self.solve(self.init_state)
 
     def solve(self, state):
@@ -21,7 +22,7 @@ class CSP:
         while not possible_assign.empty():
             assign = possible_assign.get()
             new_board, new_empty_cells = state.assign_new_variable(assign[1], assign[2])
-            new_state = State(new_board, new_empty_cells, state.domain.copy())
+            new_state = State(new_board, new_empty_cells, copy.deepcopy(state.domain))
             # check arc consistency and update domain
             consistency = new_state.update_domain(assign[1])
             self.steps.append(new_board)
@@ -82,32 +83,34 @@ class CSP:
     def check_arc_consistency(self):
         # check arc consistency for all empty cells
         for cell in self.empty_cells:
-            self.init_domain[cell] = self.init_state.update_domain(cell)
-        return
+            consistency = self.init_state.update_domain(cell)
+            if not consistency:
+                return False
+        return True
     
 
 board = [
-    [0, 0, 0, 2, 0, 0, 0, 0, 8],
-    [3, 0, 0, 4, 0, 0, 1, 0, 9],
-    [0, 0, 5, 7, 8, 0, 4, 3, 0],
-    [0, 3, 0, 0, 0, 2, 8, 0, 0],
-    [1, 0, 2, 0, 0, 0, 3, 0, 7],
-    [0, 0, 7, 0, 3, 0, 6, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 8, 5],
-    [0, 5, 0, 0, 0, 7, 0, 0, 3],
-    [7, 0, 3, 0, 9, 0, 0, 4, 6]
+    [8, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 3, 6, 0, 0, 0, 0, 0],
+    [0, 7, 0, 0, 9, 0, 2, 0, 0],
+    [0, 5, 0, 0, 0, 7, 0, 0, 0],
+    [0, 0, 0, 0, 4, 5, 7, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 3, 0],
+    [0, 0, 1, 0, 0, 0, 0, 6, 8],
+    [0, 0, 8, 5, 0, 0, 0, 1, 0],
+    [0, 9, 0, 0, 0, 0, 4, 0, 0]
 ]
 
-# csp = CSP(board)
-# # turn the each step into 2d array
+csp = CSP(board)
+# turn the each step into 2d array
 
-# # print it in readable way
-# for step in csp.steps:
-#     step = str(step)
-#     step = step.zfill(81)  
-#     step_2d = [step[i:i+9] for i in range(0, 81, 9)]
+# print it in readable way
+for step in csp.steps:
+    step = str(step)
+    step = step.zfill(81)  
+    step_2d = [step[i:i+9] for i in range(0, 81, 9)]
     
-#     # Print the 2D array in a readable format.
-#     for row in step_2d:
-#         print(" ".join(row))
-#     print("\n")  # Separate steps for clarity.
+    # Print the 2D array in a readable format.
+    for row in step_2d:
+        print(" ".join(row))
+    print("\n")  # Separate steps for clarity.
