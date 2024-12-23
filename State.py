@@ -67,9 +67,8 @@ class State:
         domain = self.domain[variable]
         neighbor_domain = self.domain[neighbor]
         for bit in range(9):
-            if neighbor_domain & (1 << bit):
-                if domain & (1 << bit):
-                    self.domain[neighbor] &= ~(1 << bit)
-                    revised = True
+            if neighbor_domain & (1<<bit) and (domain & ~(1<<bit)) == 0:
+                self.domain[neighbor] &= ~(1 << bit)
+                revised = True
         return revised
 

@@ -22,7 +22,6 @@ class CSP:
             assign = possible_assign.get()
             new_board, new_empty_cells = state.assign_new_variable(assign[1], assign[2])
             new_state = State(new_board, new_empty_cells, state.domain.copy())
-            print(new_board)
             # check arc consistency and update domain
             consistency = new_state.update_domain(assign[1])
             self.steps.append(new_board)
@@ -88,22 +87,27 @@ class CSP:
     
 
 board = [
-    [7, 0, 0, 0, 4, 0, 0, 0, 9],
-    [0, 0, 3, 0, 0, 0, 0, 0, 0],
-    [5, 0, 0, 0, 8, 0, 2, 0, 1],
-    [0, 0, 0, 0, 3, 0, 0, 0, 0],
-    [0, 4, 6, 0, 0, 0, 7, 1, 0],
-    [8, 7, 0, 0, 1, 0, 0, 0, 4],
-    [0, 3, 0, 4, 7, 5, 1, 0, 0],
-    [0, 0, 7, 0, 6, 2, 5, 0, 0],
-    [0, 5, 0, 0, 9, 1, 6, 0, 3]
+    [0, 0, 0, 2, 0, 0, 0, 0, 8],
+    [3, 0, 0, 4, 0, 0, 1, 0, 9],
+    [0, 0, 5, 7, 8, 0, 4, 3, 0],
+    [0, 3, 0, 0, 0, 2, 8, 0, 0],
+    [1, 0, 2, 0, 0, 0, 3, 0, 7],
+    [0, 0, 7, 0, 3, 0, 6, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 8, 5],
+    [0, 5, 0, 0, 0, 7, 0, 0, 3],
+    [7, 0, 3, 0, 9, 0, 0, 4, 6]
 ]
 
-csp = CSP(board)
-# turn the each step into 2d array
-steps = [list(map(int, str(step))) for step in csp.steps]
-# print it in readable way
-for step in steps:
-    for i in range(9):
-        print(step[i * 9:i * 9 + 9])
-    print()
+# csp = CSP(board)
+# # turn the each step into 2d array
+
+# # print it in readable way
+# for step in csp.steps:
+#     step = str(step)
+#     step = step.zfill(81)  
+#     step_2d = [step[i:i+9] for i in range(0, 81, 9)]
+    
+#     # Print the 2D array in a readable format.
+#     for row in step_2d:
+#         print(" ".join(row))
+#     print("\n")  # Separate steps for clarity.
