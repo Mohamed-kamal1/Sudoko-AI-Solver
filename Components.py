@@ -1,5 +1,4 @@
 import tkinter as tk
-import GUI as GUI
 import Style as S
 
 def menu (parent):
@@ -20,7 +19,7 @@ def radioButton(parent, variable, text, value, side, function):
     radio.pack(pady=5, side=side, padx=5)
     return radio
 
-def button(parent, text, function):
+def button(parent, text, function, expand=False, side=None):
     button = tk.Button(parent, text=text, font=(S.FONT_STYLE, 12), bg= S.BUTTON_COLOR, fg=S.LABEL_COLOR, command=function)
-    button.pack(pady=10, fill=tk.X, padx=10)
+    button.pack(pady=10, fill=tk.X, padx=10, expand=expand, side=side)
     return button
