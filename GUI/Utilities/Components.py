@@ -1,8 +1,8 @@
 import tkinter as tk
-import Style as S
+import GUI.Utilities.Style as S
 
 def menu (parent):
-    menu_frame = tk.Frame(parent, bg=S.MENU_BG, width=350)
+    menu_frame = tk.Frame(parent, bg=S.MENU_BG, width=400)
     menu_frame.pack_propagate(False)
     menu_frame.pack(side=tk.LEFT, fill=tk.Y)
     return menu_frame

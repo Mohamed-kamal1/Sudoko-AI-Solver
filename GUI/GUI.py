@@ -1,20 +1,18 @@
-import random
 import tkinter as tk
-from CSP import CSP
-import SudokuGenerator
-import Style as S
-import Components as Components
+import GUI.Utilities.Style as S
+import GUI.Utilities.Components as Components
+import GUI.Utilities.game as G
 
 class SudokuGUI:
     def __init__(self, root):
         self.root = root
-        self.count_step = 0
+        self.game = G.Game(self)
         self.option_board = tk.StringVar(value=1)  # value = 1 -> AI generated, value = 2 -> Human generated
         self.option_difficulity = tk.StringVar(value=1)  # value = 1 -> Easy, value = 2 -> Intermediate, value = 3 -> Hard
         
         # Main window setup
         self.root.title("Sudoku Solver")
-        self.root.geometry("900x510")
+        self.root.geometry("950x550")
         self.root.configure(bg= S.BG_COLOR)
 
         # Left menu frame
@@ -43,27 +41,27 @@ class SudokuGUI:
         Components.radioButton(self.radio_diff_frame, self.option_difficulity, "Intermediate", 2, tk.LEFT, "")
         Components.radioButton(self.radio_diff_frame, self.option_difficulity, "Hard", 3, tk.LEFT, "")
 
-        self.generation_button = Components.button(menu_frame, "Generate Game", self.generate_game)
+        self.generation_button = Components.button(menu_frame, "Generate Game", self.game.generate_game)
 
-        self.verify_button = Components.button(menu_frame, "Verify board", self.verify_board)
+        self.verify_button = Components.button(menu_frame, "Verify board", self.game.verify_board)
         self.verify_button.pack_forget()
 
-        self.board_error = Components.label(menu_frame, "Either there ia an invalid input\n or the board is unsolvable\n or doesn't have a unique solution",
+        self.board_error = Components.label(menu_frame, "Either there is an invalid input\n or the board is unsolvable\n or doesn't have a unique solution",
                                             12, "center", 10, 2)
         self.board_error.pack_forget()
 
-        self.solve_buttton = Components.button(menu_frame, "Solve Sudoku", self.solve_sudoku)
+        self.solve_buttton = Components.button(menu_frame, "Solve Sudoku", self.game.solve_sudoku)
 
         self.step_controls_frame = tk.Frame(menu_frame, bg=S.MENU_BG)
         self.step_controls_frame.pack(pady=0, anchor="center", padx=0)
-        Components.button(self.step_controls_frame, "Prev Step", self.prev_step, True, 'left')
-        Components.button(self.step_controls_frame, "Next Step", self.next_step, True, 'right')
+        Components.button(self.step_controls_frame, "Prev Step", self.game.prev_step, True, 'left')
+        Components.button(self.step_controls_frame, "Next Step", self.game.next_step, True, 'right')
         self.step_controls_frame.pack_forget()
 
     def build_game(self):
         self.game_frame = tk.Frame(self.root, bg=S.BOARD_BG)
         self.game_frame.pack(side=tk.RIGHT, fill=tk.BOTH, padx=20, pady=20)
-        self.generate_game()
+        self.game.generate_game()
 
     def toggle_board_option(self):
         if (self.option_board.get() == '1'): # AI generated
@@ -83,31 +81,7 @@ class SudokuGUI:
             self.generation_button.pack_forget()
             self.verify_button.pack(pady=10, fill=tk.X, padx=10)
             self.board_error.pack_forget()
-            self.generate_game()
-            self.solve_buttton.pack(pady=10, fill=tk.X, padx=10)
-
-    def generate_game(self):
-        # Generate and load a new Sudoku board
-        self.count_step = 1
-        self.step_controls_frame.pack_forget()
-        self.solve_buttton.pack(pady=10, fill=tk.X, padx=10)
-        self.board = [[None for _ in range(9)] for _ in range(9)]
-        self.create_board()
-        
-        if (self.option_board.get() == '1'):
-            if (self.option_difficulity.get() == '1'):
-                num_of_empty_cells = random.randint(35, 45)
-                self.board_generator = SudokuGenerator.SudokuGenerator(num_of_empty_cells, 3)
-            elif (self.option_difficulity.get() == '2'):
-                num_of_empty_cells = random.randint(46, 55)
-                self.board_generator = SudokuGenerator.SudokuGenerator(num_of_empty_cells, 3)
-            else:
-                num_of_empty_cells = random.randint(56, 65)
-                self.board_generator = SudokuGenerator.SudokuGenerator(num_of_empty_cells, 3)
-            self.load_board(self.board_generator.board)
-        else:
-            puzzle = [[0 for _ in range(9)] for _ in range(9)]
-            self.load_board(puzzle)
+            self.game.generate_game()
 
     def create_board(self):
         # Creates the Sudoku board on the game frame
@@ -115,7 +89,7 @@ class SudokuGUI:
             for j in range(9):
                 bg_color = S.EMPTY_CELL_BG1 if (i // 3 + j // 3) % 2 == 0 else S.EMPTY_CELL_BG2
                 cell = tk.Entry(self.game_frame, width=2, font=(S.FONT_STYLE, 16), justify="center", bg=bg_color, relief=tk.FLAT)
-                cell.grid(row=i, column=j, padx=2, pady=2, ipadx=10, ipady=10)
+                cell.grid(row=i, column=j, padx=2, pady=2, ipadx=12, ipady=12)
                 self.board[i][j] = cell
 
     def load_board(self, puzzle):
@@ -130,40 +104,8 @@ class SudokuGUI:
                     self.board[i][j].delete(0, tk.END)
                     self.board[i][j].config(state="normal", fg="#000000")
 
-    def solve_sudoku(self):
-        # Placeholder for solving Sudoku
-        # This function is supposed to get the solved puzzle and view it
-        self.csp = CSP(self.board_generator.board)
-        self.steps = []
-        # turn the each step into 2d array
-        for step in self.csp.steps:
-            board_1d = str(step)
-            board_1d = board_1d.zfill(81)
-            board_1d = list(map(int, board_1d))
-            board_2d = [board_1d[i:i + 9] for i in range(0, 81, 9)]
-            print(board_2d)
-            self.steps.append(board_2d)
-        self.solve_buttton.pack_forget()
-        self.step_controls_frame.pack(pady=10, padx=10, fill=tk.X)
-
-    def prev_step(self):
-        self.board = [[None for _ in range(9)] for _ in range(9)]
-        self.create_board()
-        self.load_board(self.steps[self.count_step])
-        self.count_step -= 1
-        if (self.count_step < 0):
-            self.count_step += 1
-    
-    def next_step(self):
-        self.board = [[None for _ in range(9)] for _ in range(9)]
-        self.create_board()
-        self.load_board(self.steps[self.count_step])
-        self.count_step += 1
-        if (len(self.steps) <= self.count_step):
-            self.count_step -= 1
-
     def get_user_input(self):
-        user_input = []
+        self.user_input = []
         for i in range(9):
             row = []
             for j in range(9):
@@ -172,37 +114,18 @@ class SudokuGUI:
                     row.append(int(value))
                 else:
                     row.append(0)  # Empty cell, use 0 to represent no value
-            user_input.append(row)
-        return user_input
+            self.user_input.append(row)
 
-    def verify_board(self):
-        self.count_step = 0
-        user_input = self.get_user_input()
-        isValid = True
-        if (isValid):
-            self.board = [[None for _ in range(9)] for _ in range(9)]
-            self.create_board()
-            self.load_board(user_input)
-        else:
-            self.board_error.pack(anchor="center", pady=10)
-
-
-    def validate_input(self):
-        # Validate the Sudoku board input by the user
-        for i in range(9):
-            for j in range(9):
-                value = self.board[i][j].get()
-                if value and not value.isdigit():
-                    print(f"Invalid input at ({i+1}, {j+1})")
-                    return False
-                if value and (int(value) < 1 or int(value) > 9):
-                    print(f"Invalid value at ({i+1}, {j+1})")
-                    return False
-        print("All inputs are valid.")
-        return True
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    generator = SudokuGenerator.SudokuGenerator(empty_cells=50)
-    SudokuGUI(root)
-    root.mainloop()
+    # def validate_input(self):
+    #     # Validate the Sudoku board input by the user
+    #     for i in range(9):
+    #         for j in range(9):
+    #             value = self.board[i][j].get()
+    #             if value and not value.isdigit():
+    #                 print(f"Invalid input at ({i+1}, {j+1})")
+    #                 return False
+    #             if value and (int(value) < 1 or int(value) > 9):
+    #                 print(f"Invalid value at ({i+1}, {j+1})")
+    #                 return False
+    #     print("All inputs are valid.")
+    #     return True
