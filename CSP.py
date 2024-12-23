@@ -9,8 +9,8 @@ class CSP:
         self.get_domain(board)
         self.steps = [self.init_board]
         self.init_state = State(self.init_board, self.empty_cells, self.init_domain)
+        self.check_arc_consistency()
         self.solve(self.init_state)
-        # note that we need to check all arcs of all empty cells before solving the board
 
     def solve(self, state):
         # check if the board is solved
@@ -80,7 +80,12 @@ class CSP:
                 if board[i + start_row][j + start_col] == num:
                     return False
         return True
-
+    def check_arc_consistency(self):
+        # check arc consistency for all empty cells
+        for cell in self.empty_cells:
+            self.init_domain[cell] = self.init_state.update_domain(cell)
+        return
+    
 
 board = [
     [7, 0, 0, 0, 4, 0, 0, 0, 9],
