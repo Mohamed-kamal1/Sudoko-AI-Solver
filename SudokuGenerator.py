@@ -7,12 +7,28 @@ class SudokuGenerator:
         self.empty_cells = empty_cells
         self.board = [[0 for _ in range(self.size)] for _ in range(self.size)]
         self.board_copy = []
-        self.generate_board()
+        self.removed_digits = []
+        self.count = 0
+        self.rounds = 1
+        self.max_removed = 0
+        self.generated_board = []
+        if empty_cells > 55:
+            self.rounds = 5
+        for _ in range(self.rounds):
+            self.board = [[0 for _ in range(self.size)] for _ in range(self.size)]
+            self.generate_board()
+            print("Round",_+1,":",self.count)
+            if self.count > self.max_removed:
+                self.max_removed = self.count
+                self.board_copy = self.board
+        self.board = self.board_copy
+
 
 
     def generate_board(self):
         self.fill_diagonal()
         self.fill_remaining(0,self.box_size)
+        self.removed_digits = []
         self.remove_digits()
 
 
@@ -86,19 +102,21 @@ class SudokuGenerator:
 
     # remove digits to create puzzle
     def remove_digits(self):
-        count = self.empty_cells
-        while count != 0:
+        self.count = 0
+        while self.count != self.empty_cells and len(self.removed_digits) != self.box_size**4:
             row = random.randint(0, self.size - 1)
             col = random.randint(0, self.size - 1)
-            if self.board[row][col] != 0:
+            if self.board[row][col] != 0 and (row, col) not in self.removed_digits:
+                self.removed_digits.append((row, col))
                 backup = self.board[row][col]
-                count -= 1
+                self.count += 1
                 self.board[row][col] = 0
                 num_of_solutions = self.count_solutions(self.board)
                 if num_of_solutions != 1:
                     print(num_of_solutions,"Multiple solutions found. Removing digit...")
                     self.board[row][col] = backup
-                    count += 1
+                    self.count -= 1
+
 
     # find empty cell
     def find_empty_cell(self,board):
@@ -123,7 +141,6 @@ class SudokuGenerator:
                 board[row][col] = num
                 solution_count += self.count_solutions(board)
                 board[row][col] = 0  # Backtrack
-
                 # If more than one solution is found, stop further searching
                 if solution_count > 1:
                     return solution_count
@@ -132,10 +149,13 @@ class SudokuGenerator:
 
 def main():
     box_size = 3
-    empty_cells = 50
-    sudoku = SudokuGenerator(empty_cells,box_size)
+    empty_cells = 60
+    sudoku = SudokuGenerator(empty_cells, box_size)
+
+
     for row in sudoku.board:
         print(row)
+    print("Empty cells:", sudoku.max_removed)
 
 if __name__ == "__main__":
     main()
