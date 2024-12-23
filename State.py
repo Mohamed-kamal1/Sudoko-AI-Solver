@@ -57,6 +57,7 @@ class State:
         for i in range(3):
             for j in range(3):
                 neighbors.add((start_row + i) * 9 + start_col + j)
+        neighbors.remove(variable)
         return neighbors
 
     def revise(self, neighbor, variable):
