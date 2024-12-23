@@ -1,12 +1,14 @@
 import random
 import tkinter as tk
+from CSP import CSP
 import SudokuGenerator
 import Style as S
-import Components
+import Components as Components
 
 class SudokuGUI:
     def __init__(self, root):
         self.root = root
+        self.count_step = 0
         self.option_board = tk.StringVar(value=1)  # value = 1 -> AI generated, value = 2 -> Human generated
         self.option_difficulity = tk.StringVar(value=1)  # value = 1 -> Easy, value = 2 -> Intermediate, value = 3 -> Hard
         
@@ -24,10 +26,9 @@ class SudokuGUI:
     def build_menu(self):
         menu_frame = Components.menu(self.root)
         Components.label(menu_frame, "Menu", 16, "center", 20)
-
-        Components.button(menu_frame, "Solve Sudoku", self.solve_sudoku)
+        
         # Components.button(menu_frame, "Validate Input", self.validate_input)
-        Components.button(menu_frame, "Exit", self.root.quit)
+        # Components.button(menu_frame, "Exit", self.root.quit)
 
         Components.label(menu_frame, "Choose Generated Board Mode:", 12, "w", 0)
         radio_frame = tk.Frame(menu_frame, bg=S.MENU_BG)
@@ -51,6 +52,14 @@ class SudokuGUI:
                                             12, "center", 10, 2)
         self.board_error.pack_forget()
 
+        self.solve_buttton = Components.button(menu_frame, "Solve Sudoku", self.solve_sudoku)
+
+        self.step_controls_frame = tk.Frame(menu_frame, bg=S.MENU_BG)
+        self.step_controls_frame.pack(pady=0, anchor="center", padx=0)
+        Components.button(self.step_controls_frame, "Prev Step", self.prev_step, True, 'left')
+        Components.button(self.step_controls_frame, "Next Step", self.next_step, True, 'right')
+        self.step_controls_frame.pack_forget()
+
     def build_game(self):
         self.game_frame = tk.Frame(self.root, bg=S.BOARD_BG)
         self.game_frame.pack(side=tk.RIGHT, fill=tk.BOTH, padx=20, pady=20)
@@ -61,18 +70,27 @@ class SudokuGUI:
             self.difficulity_label.pack(anchor="w", pady=0)
             self.radio_diff_frame.pack(pady=5, anchor="w", padx=10)
             self.generation_button.pack(pady=10, fill=tk.X, padx=10)
+            self.solve_buttton.pack_forget()
+            self.solve_buttton.pack(pady=10, fill=tk.X, padx=10)
             self.verify_button.pack_forget()
             self.board_error.pack_forget()
+            self.step_controls_frame.pack_forget()
         else:
             self.difficulity_label.pack_forget()
             self.radio_diff_frame.pack_forget()
+            self.solve_buttton.pack_forget()
+            self.step_controls_frame.pack_forget()
             self.generation_button.pack_forget()
             self.verify_button.pack(pady=10, fill=tk.X, padx=10)
             self.board_error.pack_forget()
             self.generate_game()
+            self.solve_buttton.pack(pady=10, fill=tk.X, padx=10)
 
     def generate_game(self):
         # Generate and load a new Sudoku board
+        self.count_step = 1
+        self.step_controls_frame.pack_forget()
+        self.solve_buttton.pack(pady=10, fill=tk.X, padx=10)
         self.board = [[None for _ in range(9)] for _ in range(9)]
         self.create_board()
         
@@ -115,18 +133,34 @@ class SudokuGUI:
     def solve_sudoku(self):
         # Placeholder for solving Sudoku
         # This function is supposed to get the solved puzzle and view it
-        sudoku_solution = [
-            [5, 3, 4, 6, 7, 8, 9, 1, 2],
-            [6, 7, 2, 1, 9, 5, 3, 4, 8],
-            [1, 9, 8, 3, 4, 2, 5, 6, 7],
-            [8, 5, 9, 7, 6, 1, 4, 2, 3],
-            [4, 2, 6, 8, 5, 3, 7, 9, 1],
-            [7, 1, 3, 9, 2, 4, 8, 5, 6],
-            [9, 6, 1, 5, 3, 7, 2, 8, 4],
-            [2, 8, 7, 4, 1, 9, 6, 3, 5],
-            [3, 4, 5, 2, 8, 6, 1, 7, 9]
-        ]
-        self.load_board(sudoku_solution)
+        self.csp = CSP(self.board_generator.board)
+        self.steps = []
+        # turn the each step into 2d array
+        for step in self.csp.steps:
+            board_1d = str(step)
+            board_1d = board_1d.zfill(81)
+            board_1d = list(map(int, board_1d))
+            board_2d = [board_1d[i:i + 9] for i in range(0, 81, 9)]
+            print(board_2d)
+            self.steps.append(board_2d)
+        self.solve_buttton.pack_forget()
+        self.step_controls_frame.pack(pady=10, padx=10, fill=tk.X)
+
+    def prev_step(self):
+        self.board = [[None for _ in range(9)] for _ in range(9)]
+        self.create_board()
+        self.load_board(self.steps[self.count_step])
+        self.count_step -= 1
+        if (self.count_step < 0):
+            self.count_step += 1
+    
+    def next_step(self):
+        self.board = [[None for _ in range(9)] for _ in range(9)]
+        self.create_board()
+        self.load_board(self.steps[self.count_step])
+        self.count_step += 1
+        if (len(self.steps) <= self.count_step):
+            self.count_step -= 1
 
     def get_user_input(self):
         user_input = []
@@ -142,6 +176,7 @@ class SudokuGUI:
         return user_input
 
     def verify_board(self):
+        self.count_step = 0
         user_input = self.get_user_input()
         isValid = True
         if (isValid):

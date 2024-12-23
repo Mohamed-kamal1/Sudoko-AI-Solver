@@ -99,11 +99,11 @@ board = [
     [0, 5, 0, 0, 9, 1, 6, 0, 3]
 ]
 
-csp = CSP(board)
-# turn the each step into 2d array
-steps = [list(map(int, str(step))) for step in csp.steps]
-# print it in readable way
-for step in steps:
-    for i in range(9):
-        print(step[i * 9:i * 9 + 9])
-    print()
+# csp = CSP(board)
+# # turn the each step into 2d array
+# steps = [list(map(int, str(step))) for step in csp.steps]
+# # print it in readable way
+# for step in steps:
+#     for i in range(9):
+#         print(step[i * 9:i * 9 + 9])
+#     print()
