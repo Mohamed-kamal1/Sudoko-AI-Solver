@@ -13,7 +13,9 @@ class State:
         new_board = self.board + value * 10**(81 - variable - 1)
         new_empty_cells = copy.deepcopy(self.empty_cells)
         new_empty_cells.remove(variable)
-        return new_board, new_empty_cells
+        new_domain = copy.deepcopy(self.domain)
+        new_domain[variable] = 1 << (value - 1)
+        return new_board, new_empty_cells, new_domain
             
     def possible_assign(self):
         # get all possible assignments for all empty cells ordered by least domain using priority queue

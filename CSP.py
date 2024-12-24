@@ -27,8 +27,8 @@ class CSP:
         while not possible_assign.empty():
             assign = possible_assign.get()
             logging.info(f"Trying to assign value {assign[2]} to cell ({assign[1] // 9}, {assign[1] % 9})")
-            new_board, new_empty_cells = state.assign_new_variable(assign[1], assign[2])
-            new_state = State(new_board, new_empty_cells, copy.deepcopy(state.domain))
+            new_board, new_empty_cells, new_domain = state.assign_new_variable(assign[1], assign[2])
+            new_state = State(new_board, new_empty_cells, new_domain)
             # check arc consistency and update domain
             consistency = new_state.update_domain(assign[1])
             self.steps.append((assign[1], assign[2]))
@@ -106,3 +106,19 @@ class CSP:
                     f.write(f'Cell ({i}, {j}): Domain {self.init_domain[i * 9 + j]:09b}\n')
             f.write('\n')
         logging.info(f'Step {len(self.steps)}: Assigned value to cell ({xi // 9}, {xi % 9})')
+        
+        
+def main(): 
+    board = [
+        [8, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 3, 6, 0, 0, 0, 0, 0],
+        [0, 7, 0, 0, 9, 0, 2, 0, 0],
+        [0, 5, 0, 0, 0, 7, 0, 0, 0],
+        [0, 0, 0, 0, 4, 5, 7, 0, 0],
+        [0, 0, 0, 1, 0, 0, 0, 3, 0],
+        [0, 0, 1, 0, 0, 0, 0, 6, 8],
+        [0, 0, 8, 5, 0, 0, 0, 1, 0],
+        [0, 9, 0, 0, 0, 0, 4, 0, 0]
+    ]
+    csp = CSP(board)
+    
