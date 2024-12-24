@@ -10,6 +10,10 @@ class CSP:
         self.empty_cells = []  # contains the index of empty cells
         self.init_board = self.to_int(board)
         self.init_domain = [0] * 81
+        with open("output/revise_steps.txt", 'w') as file:
+            pass 
+        with open("output/steps.txt", 'w') as file:
+            pass
         self.get_domain(board)
         self.steps = []
         self.init_state = State(self.init_board, self.empty_cells, self.init_domain)
