@@ -71,11 +71,14 @@ class Game:
         self.gui.step_controls_frame.pack_forget()
         self.gui.solve_buttton.pack(pady=10, fill=tk.X, padx=10)
         self.gui.get_user_input()
-        isValid = True
+
+        num_of_sol = SudokuGenerator(0).count_solutions(self.gui.user_input)
+        isValid = True if num_of_sol == 1 else False
         if (isValid):
             self.gui.board = [[None for _ in range(9)] for _ in range(9)]
             self.gui.create_board()
             self.gui.load_board(self.gui.user_input)
+            self.gui.board_error.pack_forget()
         else:
             self.gui.board_error.pack(anchor="center", pady=10)
         
