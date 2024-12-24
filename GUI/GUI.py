@@ -48,7 +48,7 @@ class SudokuGUI:
         self.verify_button = Components.button(menu_frame, "Verify board", self.game.verify_board)
         self.verify_button.pack_forget()
 
-        self.board_error = Components.label(menu_frame, "Either there is an invalid input\n or the board is unsolvable\n or doesn't have a unique solution",
+        self.board_error = Components.label(menu_frame, "Either the board is unsolvable\n or doesn't have a unique solution",
                                             12, "center", 10, 2)
         self.board_error.pack_forget()
 
@@ -123,6 +123,7 @@ class SudokuGUI:
             self.user_input.append(row)
 
 
+
     def validate_input(self, event):
         cell = event.widget
         value = cell.get().strip()
@@ -173,3 +174,4 @@ class SudokuGUI:
     #                 return False
     #     print("All inputs are valid.")
     #     return True
+
