@@ -29,10 +29,10 @@ class State:
         return possible_assign
         
     
-    def update_domain(self, variable):
+    def update_domain(self, variable, empty_cells):
         # check arc consistency and update domain
         queue = []
-        neighbors = self.get_neighbors(variable)
+        neighbors = self.get_neighbors(variable, empty_cells)
         for neighbor in neighbors:
             queue.append((neighbor, variable))
         while queue:
@@ -40,13 +40,13 @@ class State:
             if self.revise(neighbor, variable):
                 if self.domain[neighbor] == 0:
                     return False
-                for n in self.get_neighbors(neighbor):
+                for n in self.get_neighbors(neighbor, empty_cells):
                     if n != variable:
                         queue.append((n, neighbor))
         return True
        
 
-    def get_neighbors(self, variable):
+    def get_neighbors(self, variable, empty_cells):
         # get all neighbors of a variable (same row, same column, same box)
         row = variable // 9
         col = variable % 9
@@ -60,6 +60,7 @@ class State:
             for j in range(3):
                 neighbors.add((start_row + i) * 9 + start_col + j)
         neighbors.remove(variable)
+        neighbors = {cell for cell in neighbors if cell in empty_cells}
         return neighbors
 
     def revise(self, neighbor, variable, file_path='output/revise_steps.txt'):

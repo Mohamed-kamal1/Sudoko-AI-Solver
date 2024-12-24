@@ -30,7 +30,7 @@ class CSP:
             new_board, new_empty_cells, new_domain = state.assign_new_variable(assign[1], assign[2])
             new_state = State(new_board, new_empty_cells, new_domain)
             # check arc consistency and update domain
-            consistency = new_state.update_domain(assign[1])
+            consistency = new_state.update_domain(assign[1], self.empty_cells)
             self.steps.append((assign[1], assign[2]))
             self.visualize_step(assign[1], assign[2])
             if not consistency:
@@ -93,7 +93,7 @@ class CSP:
     def check_arc_consistency(self):
         # check arc consistency for all empty cells
         for cell in self.empty_cells:
-            consistency = self.init_state.update_domain(cell)
+            consistency = self.init_state.update_domain(cell, self.empty_cells)
             if not consistency:
                 return False
         return True
