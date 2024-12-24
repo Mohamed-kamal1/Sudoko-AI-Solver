@@ -46,7 +46,7 @@ class SudokuGUI:
         self.verify_button = Components.button(menu_frame, "Verify board", self.game.verify_board)
         self.verify_button.pack_forget()
 
-        self.board_error = Components.label(menu_frame, "Either there is an invalid input\n or the board is unsolvable\n or doesn't have a unique solution",
+        self.board_error = Components.label(menu_frame, "Either the board is unsolvable\n or doesn't have a unique solution",
                                             12, "center", 10, 2)
         self.board_error.pack_forget()
 
@@ -116,16 +116,3 @@ class SudokuGUI:
                     row.append(0)  # Empty cell, use 0 to represent no value
             self.user_input.append(row)
 
-    # def validate_input(self):
-    #     # Validate the Sudoku board input by the user
-    #     for i in range(9):
-    #         for j in range(9):
-    #             value = self.board[i][j].get()
-    #             if value and not value.isdigit():
-    #                 print(f"Invalid input at ({i+1}, {j+1})")
-    #                 return False
-    #             if value and (int(value) < 1 or int(value) > 9):
-    #                 print(f"Invalid value at ({i+1}, {j+1})")
-    #                 return False
-    #     print("All inputs are valid.")
-    #     return True

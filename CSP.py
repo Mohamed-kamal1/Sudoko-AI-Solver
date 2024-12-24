@@ -7,7 +7,7 @@ class CSP:
         self.init_board = self.to_int(board)
         self.init_domain = [0] * 81
         self.get_domain(board)
-        self.steps = [self.init_board]
+        self.steps = []
         self.init_state = State(self.init_board, self.empty_cells, self.init_domain)
         if not self.check_arc_consistency():
             return
@@ -25,7 +25,7 @@ class CSP:
             new_state = State(new_board, new_empty_cells, copy.deepcopy(state.domain))
             # check arc consistency and update domain
             consistency = new_state.update_domain(assign[1])
-            self.steps.append(new_board)
+            self.steps.append((assign[1], assign[2]))
             if not consistency:
                 continue
             if self.solve(new_state):
@@ -89,28 +89,28 @@ class CSP:
         return True
     
 
-board = [
-    [8, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 3, 6, 0, 0, 0, 0, 0],
-    [0, 7, 0, 0, 9, 0, 2, 0, 0],
-    [0, 5, 0, 0, 0, 7, 0, 0, 0],
-    [0, 0, 0, 0, 4, 5, 7, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 3, 0],
-    [0, 0, 1, 0, 0, 0, 0, 6, 8],
-    [0, 0, 8, 5, 0, 0, 0, 1, 0],
-    [0, 9, 0, 0, 0, 0, 4, 0, 0]
-]
+# board = [
+#     [8, 0, 0, 0, 0, 0, 0, 0, 0],
+#     [0, 0, 3, 6, 0, 0, 0, 0, 0],
+#     [0, 7, 0, 0, 9, 0, 2, 0, 0],
+#     [0, 5, 0, 0, 0, 7, 0, 0, 0],
+#     [0, 0, 0, 0, 4, 5, 7, 0, 0],
+#     [0, 0, 0, 1, 0, 0, 0, 3, 0],
+#     [0, 0, 1, 0, 0, 0, 0, 6, 8],
+#     [0, 0, 8, 5, 0, 0, 0, 1, 0],
+#     [0, 9, 0, 0, 0, 0, 4, 0, 0]
+# ]
 
-csp = CSP(board)
+# csp = CSP(board)
 # turn the each step into 2d array
 
 # print it in readable way
-for step in csp.steps:
-    step = str(step)
-    step = step.zfill(81)  
-    step_2d = [step[i:i+9] for i in range(0, 81, 9)]
+# for step in csp.steps:
+#     step = str(step)
+#     step = step.zfill(81)  
+#     step_2d = [step[i:i+9] for i in range(0, 81, 9)]
     
-    # Print the 2D array in a readable format.
-    for row in step_2d:
-        print(" ".join(row))
-    print("\n")  # Separate steps for clarity.
+#     # Print the 2D array in a readable format.
+#     for row in step_2d:
+#         print(" ".join(row))
+#     print("\n")  # Separate steps for clarity.

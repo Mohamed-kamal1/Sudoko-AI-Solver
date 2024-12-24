@@ -2,6 +2,7 @@ from SudokuGenerator import SudokuGenerator
 import random
 import tkinter as tk
 from CSP import CSP
+import GUI.Utilities.Style as S
 
 class Game:
 
@@ -25,7 +26,7 @@ class Game:
                 self.board_generator = SudokuGenerator(num_of_empty_cells, 3)
             else:
                 num_of_empty_cells = random.randint(56, 65)
-                self.gui.board_generator = SudokuGenerator(num_of_empty_cells, 3)
+                self.board_generator = SudokuGenerator(num_of_empty_cells, 3)
             self.gui.load_board(self.board_generator.board)
             self.gui.solve_buttton.pack(pady=10, fill=tk.X, padx=10)
         else:
@@ -38,20 +39,17 @@ class Game:
         else:
             self.csp = CSP(self.gui.user_input)
             
-        self.steps = []
-        for step in self.csp.steps:
-            board_1d = str(step)
-            board_1d = board_1d.zfill(81)
-            board_1d = list(map(int, board_1d))
-            board_2d = [board_1d[i:i + 9] for i in range(0, 81, 9)]
-            self.steps.append(board_2d)
+        self.steps = self.csp.steps
         self.gui.solve_buttton.pack_forget()
         self.gui.step_controls_frame.pack(pady=10, padx=10, fill=tk.X)
 
     def prev_step(self):
-        self.gui.board = [[None for _ in range(9)] for _ in range(9)]
-        self.gui.create_board()
-        self.gui.load_board(self.steps[self.count_step])
+        variable, _ = self.csp.steps[self.count_step - 1]
+        row = variable // 9
+        coln = variable % 9
+        self.gui.board[row][coln].config(state="normal", fg="#000000")
+        self.gui.board[row][coln].delete(0, tk.END)
+
         self.count_step -= 1
         if (self.count_step < 0):
             self.count_step += 1
@@ -59,13 +57,20 @@ class Game:
     def next_step(self):
         self.count_step += 1
 
-        if (len(self.steps) <= self.count_step):
+        if (len(self.steps) < self.count_step):
             self.count_step -= 1
 
-        self.gui.board = [[None for _ in range(9)] for _ in range(9)]
-        self.gui.create_board()
-        self.gui.load_board(self.steps[self.count_step])
-    
+        variable, value = self.csp.steps[self.count_step - 1]
+        row = variable // 9
+        coln = variable % 9
+        if value != 0:
+            self.gui.board[row][coln].insert(0, str(value))
+            disabled_bg = S.FIXED_NUMBER_BG1 if (row // 3 + coln // 3) % 2 == 0 else S.FIXED_NUMBER_BG2
+            self.gui.board[row][coln].config(state="disabled", fg="#303036", disabledbackground=disabled_bg)
+        else:
+            self.gui.board[row][coln].delete(0, tk.END)
+            self.gui.board[row][coln].config(state="normal", fg="#000000")
+
     def verify_board(self):                                                # Needs to be configured
         self.count_step = 0
         self.gui.step_controls_frame.pack_forget()
