@@ -89,6 +89,7 @@ class CSP:
         return True
     
 
+
 # board = [
 #     [8, 0, 0, 0, 0, 0, 0, 0, 0],
 #     [0, 0, 3, 6, 0, 0, 0, 0, 0],
@@ -100,6 +101,7 @@ class CSP:
 #     [0, 0, 8, 5, 0, 0, 0, 1, 0],
 #     [0, 9, 0, 0, 0, 0, 4, 0, 0]
 # ]
+
 
 # csp = CSP(board)
 # turn the each step into 2d array
