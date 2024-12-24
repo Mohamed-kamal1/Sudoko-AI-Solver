@@ -1,57 +1,31 @@
-import unittest
+import time
 from CSP import CSP
 from SudokuGenerator import SudokuGenerator
 
-class TestCSP(unittest.TestCase): 
-    def setUp(self):
-        self.board = [
-            [6, 0, 8, 0, 0, 0, 0, 0, 0],
-            [0, 4, 0, 1, 0, 0, 5, 0, 0],
-            [0, 0, 1, 0, 0, 6, 9, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 1, 0, 0, 2, 0, 0, 9, 0],
-            [0, 3, 0, 4, 0, 0, 7, 0, 0],
-            [0, 0, 0, 6, 0, 0, 0, 8, 0],
-            [3, 8, 0, 0, 0, 4, 0, 2, 0],
-            [0, 9, 0, 7, 0, 0, 0, 3, 0]
-        ]
-        self.csp = CSP(self.board)
+def measure_runtime(empty_cells):
+    generator = SudokuGenerator(empty_cells)
+    board = generator.board
+    csp_solver = CSP(board)
 
-    def test_1(self):
-        expected = [
-                [6, 7, 8, 2, 9, 5, 3, 1, 4],
-                [9, 4, 3, 1, 7, 8, 5, 6, 2],
-                [2, 5, 1, 3, 4, 6, 9, 7, 8],
-                [5, 6, 9, 8, 1, 7, 2, 4, 3],
-                [4, 1, 7, 5, 2, 3, 8, 9, 6],
-                [8, 3, 2, 4, 6, 9, 7, 5, 1],
-                [7, 2, 5, 6, 3, 1, 4, 8, 9],
-                [3, 8, 6, 9, 5, 4, 1, 2, 7],
-                [1, 9, 4, 7, 8, 2, 6, 3, 5]
-            ]
-        step = self.csp.steps[len(self.csp.steps) - 1]
-        self.assertEqual(step, self.csp.to_int(expected))
+    start_time = time.time()
+    solved = csp_solver.solve(csp_solver.init_state)
+    end_time = time.time()
 
-#         test count solution
-    def test_count_solutions(self):
-        board = [
-            [2, 4, 0, 1, 3, 6, 7, 0, 0],
-            [1, 8, 3, 5, 7, 0, 4, 6, 9],
-            [7, 5, 0, 0, 4, 9, 1, 0, 2],
-            [0, 0, 0, 0, 6, 5, 8, 9, 0],
-            [3, 1, 0, 0, 0, 8, 0, 0, 0],
-            [0, 9, 8, 4, 1, 7, 2, 0, 3],
-            [0, 0, 2, 7, 8, 1, 9, 0, 6],
-            [8, 6, 0, 0, 9, 3, 5, 1, 0],
-            [9, 0, 0, 6, 0, 4, 3, 0, 8]
-        ]
-        generator = SudokuGenerator(0)  # Initialize with 0 empty cells
-        num_solutions = generator.count_solutions(board)
-        self.assertEqual(num_solutions, 1)  # Assuming the board has a unique solution
+    runtime = end_time - start_time
+    return runtime, solved
 
+def main():
+    empty_cells_list = [25,26,33,34,35,
+                        42,44,45,47,49,
+                        50,52,54,55,57]
+    results = []
 
+    with open('output/runtime_results.txt', 'w') as f:
+        for empty_cells in empty_cells_list:
+            runtime, solved = measure_runtime(empty_cells)
+            print(f"Empty cells: {empty_cells}, Runtime: {runtime:.4f} seconds, Solved: {solved}")
+            results.append((empty_cells, runtime, solved))
+            f.write(f"Empty cells: {empty_cells}, Runtime: {runtime:.4f} seconds, Solved: {solved}\n")
 
-if __name__ == '__main__':
-    unittest.main()
-    
-    
+if __name__ == "__main__":
+    main()

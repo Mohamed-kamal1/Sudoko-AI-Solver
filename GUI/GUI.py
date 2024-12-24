@@ -175,3 +175,17 @@ class SudokuGUI:
     #     print("All inputs are valid.")
     #     return True
 
+# app flow
+
+# 1. User selects the board generation mode (AI generated or Human generated)
+# 2. User selects the difficulity level (Easy, Intermediate, Hard)
+# 3. User clicks on "Generate Game" button
+# 4. AI generates a Sudoku board based on the selected difficulity level
+#  generate sudoku flow
+# 5. AI generates a Sudoku board with a unique solution
+# first step: generate a random valid Sudoku board
+# 6. AI removes a random number of digits from the board
+# 7. AI checks if the board has a unique solution
+# 8. If the board has a unique solution, the board is returned to the user
+# 9. If the board doesn't have a unique solution, AI removes the last digit and repeats step 7
+# 10. User can now solve the Sudoku board

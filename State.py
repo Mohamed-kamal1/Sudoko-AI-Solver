@@ -1,6 +1,5 @@
 import copy
 import queue
-import sys
 
 
 class State:
@@ -61,21 +60,26 @@ class State:
         neighbors.remove(variable)
         return neighbors
 
-    def revise(self, neighbor, variable):
+    def revise(self, neighbor, variable, file_path='output/revise_steps.txt'):
         # we need to eliminate the domain of neighbor based on the domain of variable
-        # return true in case the neighbor domain is modified  
+        # return true in case the neighbor domain is modified
         revised = False
         domain = self.domain[variable]
         neighbor_domain = self.domain[neighbor]
-        for bit in range(9): 
-            if neighbor_domain & (1<<bit):
-                if not self.check(domain, bit):
-                    self.domain[neighbor] &= ~(1 << bit)
-                    revised = True
-                
-            # if neighbor_domain & (1<<bit) and (domain & ~(1<<bit)) == 0:
-            #     self.domain[neighbor] &= ~(1 << bit)
-            #     revised = True
+
+        with open(file_path, 'a') as f:
+            f.write(
+                f"Before revision: Variable {variable} domain = {bin(domain)}, Neighbor {neighbor} domain = {bin(neighbor_domain)}\n")
+
+            for bit in range(9):
+                if neighbor_domain & (1 << bit):
+                    if not self.check(domain, bit):
+                        self.domain[neighbor] &= ~(1 << bit)
+                        revised = True
+                        f.write(f"Removed bit {bit} from neighbor {neighbor}'s domain.\n")
+
+            f.write(f"After revision: Neighbor {neighbor} domain = {bin(self.domain[neighbor])}\n\n")
+
         return revised
 
     def check(self, domain, bit):

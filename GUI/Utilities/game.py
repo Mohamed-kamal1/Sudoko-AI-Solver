@@ -19,13 +19,13 @@ class Game:
         
         if (self.gui.option_board.get() == '1'):
             if (self.gui.option_difficulity.get() == '1'):
-                num_of_empty_cells = random.randint(35, 45)
+                num_of_empty_cells = random.randint(20, 35)
                 self.board_generator = SudokuGenerator(num_of_empty_cells, 3)
             elif (self.gui.option_difficulity.get() == '2'):
-                num_of_empty_cells = random.randint(46, 55)
+                num_of_empty_cells = random.randint(36, 49)
                 self.board_generator = SudokuGenerator(num_of_empty_cells, 3)
             else:
-                num_of_empty_cells = random.randint(56, 65)
+                num_of_empty_cells = random.randint(50, 64)
                 self.board_generator = SudokuGenerator(num_of_empty_cells, 3)
             self.gui.load_board(self.board_generator.board)
             self.gui.solve_buttton.pack(pady=10, fill=tk.X, padx=10)

@@ -1,9 +1,13 @@
 import copy
+import logging
 from State import State
+
+# Configure logging
+logging.basicConfig(filename='output/solving_process.log', level=logging.INFO, format='%(asctime)s - %(message)s')
 
 class CSP:
     def __init__(self, board):
-        self.empty_cells = []  # contains the index of empty cells 
+        self.empty_cells = []  # contains the index of empty cells
         self.init_board = self.to_int(board)
         self.init_domain = [0] * 81
         self.get_domain(board)
@@ -16,21 +20,26 @@ class CSP:
     def solve(self, state):
         # check if the board is solved
         if len(state.empty_cells) == 0:
+            logging.info("Board solved successfully.")
             return True
 
         possible_assign = state.possible_assign()
         while not possible_assign.empty():
             assign = possible_assign.get()
+            logging.info(f"Trying to assign value {assign[2]} to cell ({assign[1] // 9}, {assign[1] % 9})")
             new_board, new_empty_cells = state.assign_new_variable(assign[1], assign[2])
             new_state = State(new_board, new_empty_cells, copy.deepcopy(state.domain))
             # check arc consistency and update domain
             consistency = new_state.update_domain(assign[1])
             self.steps.append((assign[1], assign[2]))
+            self.visualize_step(assign[1], assign[2])
             if not consistency:
+                logging.info(f"Assignment of value {assign[2]} to cell ({assign[1] // 9}, {assign[1] % 9}) is inconsistent.")
                 continue
             if self.solve(new_state):
                 return True
 
+        logging.info("Backtracking...")
         return False
 
     def to_int(self, board):
@@ -80,6 +89,7 @@ class CSP:
                 if board[i + start_row][j + start_col] == num:
                     return False
         return True
+
     def check_arc_consistency(self):
         # check arc consistency for all empty cells
         for cell in self.empty_cells:
@@ -87,32 +97,12 @@ class CSP:
             if not consistency:
                 return False
         return True
-    
 
-
-# board = [
-#     [8, 0, 0, 0, 0, 0, 0, 0, 0],
-#     [0, 0, 3, 6, 0, 0, 0, 0, 0],
-#     [0, 7, 0, 0, 9, 0, 2, 0, 0],
-#     [0, 5, 0, 0, 0, 7, 0, 0, 0],
-#     [0, 0, 0, 0, 4, 5, 7, 0, 0],
-#     [0, 0, 0, 1, 0, 0, 0, 3, 0],
-#     [0, 0, 1, 0, 0, 0, 0, 6, 8],
-#     [0, 0, 8, 5, 0, 0, 0, 1, 0],
-#     [0, 9, 0, 0, 0, 0, 4, 0, 0]
-# ]
-
-
-# csp = CSP(board)
-# turn the each step into 2d array
-
-# print it in readable way
-# for step in csp.steps:
-#     step = str(step)
-#     step = step.zfill(81)  
-#     step_2d = [step[i:i+9] for i in range(0, 81, 9)]
-    
-#     # Print the 2D array in a readable format.
-#     for row in step_2d:
-#         print(" ".join(row))
-#     print("\n")  # Separate steps for clarity.
+    def visualize_step(self, xi, xj):
+        with open('output/steps.txt', 'a') as f:
+            f.write(f'Step {len(self.steps)}: Assigning value to cell ({xi // 9}, {xi % 9})\n')
+            for i in range(9):
+                for j in range(9):
+                    f.write(f'Cell ({i}, {j}): Domain {self.init_domain[i * 9 + j]:09b}\n')
+            f.write('\n')
+        logging.info(f'Step {len(self.steps)}: Assigned value to cell ({xi // 9}, {xi % 9})')
